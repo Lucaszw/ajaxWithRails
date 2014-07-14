@@ -1,0 +1,41 @@
+- # Create a form , make sure to have remote true and assign an id for ajax...
+
+.emptySpace
+
+= form_for :x, url: home_submit_path , remote: true , html: {id: "add_item" } do |f|
+  .col-lg-3
+    = f.label :enter_value , :class => "label label-default", :style => "font-size :20px;"
+    %div{:style => "width:20px;height:20px;"}
+    .input-group
+      = f.text_field :value, :class => "form-control" 
+      %span.input-group-btn
+        = f.submit :submit, :class => "btn btn-danger"
+
+
+:coffee
+  # Assign ajax events to your form, ensure that div id's match form, and where your json data will be later rendered
+  $(document).ready ->
+    $("#add_item").on("ajax:success", (e, data, status, xhr) ->
+       $("#my_table").prepend("<li class='list-group-item' >" + data.item + " created at " + data.created_at + "</li>")
+    ).bind "ajax:error", (e, xhr, status, error) ->
+      $("#errors").append(xhr.responseText)
+
+#errors
+
+.emptySpace
+
+- # This div is where your data will be sent after ajax call
+%div{:style => "display:block;margin-top:100px;"}
+  %h2{:style => "margin-left:15px;"} 
+    Saved in database :
+  .col-lg-8
+    %ul.list-group#my_table
+      - @words.each do |w|
+        %li.list-group-item 
+          = w.item + ". This text was created at " + w.created_at.to_s
+
+
+:sass
+  .emptySpace
+    width : 20px
+    height : 20px
